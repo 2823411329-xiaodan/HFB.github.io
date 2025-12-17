@@ -1,0 +1,1701 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>吃丹修仙助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #333;
+            min-height: 100vh;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 100%;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        header {
+            background: linear-gradient(90deg, #1a2a6c, #b21f1f);
+            color: white;
+            padding: 20px 15px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 20px 15px;
+        }
+        
+        .input-section {
+            margin-bottom: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #1a2a6c;
+            font-size: 0.95rem;
+        }
+        
+        input {            width: 100%;            padding: 10px 12px;            border: 2px solid #ddd;            border-radius: 6px;            font-size: 0.95rem;            transition: all 0.3s;        }
+
+        /* 模态窗口样式 */
+        .modal {            display: none;            position: fixed;            top: 0;            left: 0;            width: 100%;            height: 100%;            background-color: rgba(0, 0, 0, 0.7);            z-index: 1000;            justify-content: center;            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .modal-message {
+            font-size: 1.2rem;
+            color: #1a2a6c;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .modal-image {
+            width: 100%;
+            max-width: 300px;
+            margin: 10px auto;
+            border-radius: 8px;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background-color: #b21f1f;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+        }
+
+        .close-button:hover {
+            background-color: #8e1a1a;
+        }
+        
+        input:focus {
+            border-color: #1a2a6c;
+            box-shadow: 0 0 0 3px rgba(26, 42, 108, 0.2);
+            outline: none;
+        }
+        
+        .btn {
+            background: linear-gradient(90deg, #1a2a6c, #b21f1f);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            width: 100%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .result-section {
+            display: none;
+            margin-top: 25px;
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .result-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #1a2a6c;
+        }
+        
+        .result-title {
+            color: #1a2a6c;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.3rem;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 8px;
+        }
+        
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .result-item {
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            border-left: 3px solid #b21f1f;
+        }
+        
+        .result-label {
+            font-weight: 600;
+            color: #555;
+            font-size: 0.85rem;
+        }
+        
+        .result-value {
+            font-size: 1.1rem;
+            color: #1a2a6c;
+            font-weight: 700;
+        }
+        
+        .time-section {
+            background-color: #f0f7ff;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+        
+        .time-title {
+            color: #1a2a6c;
+            margin-bottom: 12px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+        
+        .time-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        /* 默认情况下，所有时间网格都使用单列布局 */
+        #pool-results .time-grid,
+        #wuji-results .time-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .time-grid.single-item {
+            grid-template-columns: 1fr;
+        }
+        
+        .time-item {
+            text-align: center;
+            padding: 12px;
+            background-color: white;
+            border-radius: 6px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .time-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #b21f1f;
+            margin-bottom: 4px;
+            text-align: center;
+            width: 100%;
+            display: block;
+        }
+        
+        .time-label {
+            color: #666;
+            font-size: 0.8rem;
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            background-color: #fde8e6;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-top: 12px;
+            display: none;
+            border-left: 4px solid #e74c3c;
+            font-size: 0.9rem;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 15px;
+            color: white;
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                margin: 8px 0;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .content {
+                padding: 15px 12px;
+            }
+            
+            .time-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            /* 手机端优化：基础生命和基础攻击输入框布局 */
+            #power-limit-calculator > div[style*="flex"] {
+                flex-direction: column !important;
+                gap: 15px !important;
+            }
+            
+            #power-limit-calculator #base-health,
+            #power-limit-calculator #base-attack {
+                min-width: 120px !important;
+            }
+            
+            #power-limit-calculator select {
+                min-width: 60px !important;
+                padding: 10px 8px !important;
+                font-size: 0.9rem !important;
+            }
+            
+            #power-limit-calculator input[type="number"] {
+                padding: 10px 8px !important;
+                font-size: 0.9rem !important;
+            }
+            
+            #power-limit-calculator .form-group {
+                margin-bottom: 12px !important;
+            }
+            
+            /* 针对小屏幕手机的额外优化 */
+            @media (max-width: 400px) {
+                #power-limit-calculator input[type="number"]::placeholder {
+                    font-size: 0.8rem !important;
+                }
+                
+                #power-limit-calculator select {
+                    min-width: 50px !important;
+                    font-size: 0.8rem !important;
+                }
+                
+                #power-limit-calculator #base-health,
+                #power-limit-calculator #base-attack {
+                    min-width: 100px !important;
+                }
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>吃丹修仙助手</h1>
+                    <p class="subtitle">作者QQ：2823411329|群聊939556650</p>
+                    <!-- 头部添加固定网址 -->
+            <p class="header-url">官方网址：<a href="https://xxzs.kesug.com" target="_blank">xxzs.kesug.com</a></p>
+        </header>
+        
+        <div class="content">
+            <!-- 计算器类型选择 -->
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label>选择计算器类型</label>
+                <select id="calculator-type" style="width: 100%; padding: 12px 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; background: white;">
+                    <option value="pool">挂机池计算器</option>
+                    <option value="wuji">无极魔丹计算器</option>
+                    <option value="power-limit">战力上限计算器</option>
+                    <option value="attribute-pill">属性丹计算器</option>
+                </select>
+            </div>
+            
+            <!-- 挂机池计算器输入区域 -->
+            <div id="pool-calculator" class="input-section">
+                <!-- 模式切换 -->
+                <div class="form-group">
+                    <label for="pool-mode">计算模式</label>
+                    <select id="pool-mode" style="width: 100%; padding: 12px 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; background: white;">
+                        <option value="power">1. 指定战力计算</option>
+                        <option value="time">2. 指定挂机时间计算</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="current-power">当前战斗力</label>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="number" id="current-power" placeholder="请输入当前战斗力" min="0.01" step="0.01" style="flex: 1;">
+                        <select id="current-power-unit" style="padding: 10px 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 0.95rem; min-width: 80px;">
+                            <option value="">空白</option>
+                            <option value="万">万</option>
+                            <option value="亿">亿</option>
+                            <option value="兆">兆</option>
+                            <option value="京">京</option>
+                            <option value="垓">垓</option>
+                            <option value="秭">秭</option>
+                            <option value="穰">穰</option>
+                            <option value="沟">沟</option>
+                            <option value="涧">涧</option>
+                            <option value="正">正</option>
+                            <option value="载">载</option>
+                            <option value="极">极</option>
+                            <option value="恒河沙">恒河沙</option>
+                            <option value="阿僧祇">阿僧祇</option>
+                            <option value="那由它">那由它</option>
+                            <option value="不可思议">不可思议</option>
+                            <option value="无量">无量</option>
+                            <option value="大数">大数</option>
+                            <option value="无敌">无敌</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- 指定战力计算输入区域 -->
+                <div id="power-mode-section">
+                    <div class="form-group">
+                        <label for="target-power">目标战斗力</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="number" id="target-power" placeholder="请输入目标战斗力" min="0.01" step="0.01" style="flex: 1;">
+                            <select id="target-power-unit" style="padding: 10px 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 0.95rem; min-width: 80px;">
+                                <option value="">空白</option>
+                                <option value="万">万</option>
+                                <option value="亿">亿</option>
+                                <option value="兆">兆</option>
+                                <option value="京">京</option>
+                                <option value="垓">垓</option>
+                                <option value="秭">秭</option>
+                                <option value="穰">穰</option>
+                                <option value="沟">沟</option>
+                                <option value="涧">涧</option>
+                                <option value="正">正</option>
+                                <option value="载">载</option>
+                                <option value="极">极</option>
+                                <option value="恒河沙">恒河沙</option>
+                                <option value="阿僧祇">阿僧祇</option>
+                                <option value="那由它">那由它</option>
+                                <option value="不可思议">不可思议</option>
+                                <option value="无量">无量</option>
+                                <option value="大数">大数</option>
+                                <option value="无敌">无敌</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 指定时间计算输入区域 -->
+                <div id="time-mode-section" style="display: none;">
+                    <div class="form-group">
+                        <label>挂机时间</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="number" id="days" placeholder="天" min="0" step="1" style="flex: 1;">
+                            <input type="number" id="hours" placeholder="小时" min="0" max="23" step="1" style="flex: 1;">
+                            <input type="number" id="minutes" placeholder="分钟" min="0" max="59" step="1" style="flex: 1;">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="growth-rate">每5秒增长率（例如：0.01表示0.01%）</label>
+                    <input type="number" id="growth-rate" placeholder="请输入增长率" min="0.0001" step="0.0001">
+                </div>
+                
+                <button id="calculate-pool-btn" class="btn">计算所需时间</button>
+                
+                <div id="error-message-pool" class="error-message"></div>
+            </div>
+            
+            <!-- 无极魔丹计算器输入区域 -->
+            <div id="wuji-calculator" class="input-section" style="display: none;">
+                <!-- 模式切换 -->
+                <div class="form-group">
+                    <label for="wuji-mode">计算模式</label>
+                    <select id="wuji-mode" style="width: 100%; padding: 12px 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 1rem; background: white;">
+                        <option value="target">1. 计算到达目标战力</option>
+                        <option value="pills">2. 计算吃丹到达战力</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="current-power-wuji">当前战斗力</label>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="number" id="current-power-wuji" placeholder="请输入当前战斗力" min="0.01" step="0.01" style="flex: 1;">
+                        <select id="current-power-wuji-unit" style="padding: 10px 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 0.95rem; min-width: 80px;">
+                            <option value="">空白</option>
+                            <option value="万">万</option>
+                            <option value="亿">亿</option>
+                            <option value="兆">兆</option>
+                            <option value="京">京</option>
+                            <option value="垓">垓</option>
+                            <option value="秭">秭</option>
+                            <option value="穰">穰</option>
+                            <option value="沟">沟</option>
+                            <option value="涧">涧</option>
+                            <option value="正">正</option>
+                            <option value="载">载</option>
+                            <option value="极">极</option>
+                            <option value="恒河沙">恒河沙</option>
+                            <option value="阿僧祇">阿僧祇</option>
+                            <option value="那由它">那由它</option>
+                            <option value="不可思议">不可思议</option>
+                            <option value="无量">无量</option>
+                            <option value="大数">大数</option>
+                            <option value="无敌">无敌</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- 目标战斗力输入区域 -->
+                <div id="target-power-wuji-section">
+                    <div class="form-group">
+                        <label for="target-power-wuji">目标战斗力</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="number" id="target-power-wuji" placeholder="请输入目标战斗力" min="0.01" step="0.01" style="flex: 1;">
+                            <select id="target-power-wuji-unit" style="padding: 10px 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 0.95rem; min-width: 80px;">
+                                <option value="">空白</option>
+                                <option value="万">万</option>
+                                <option value="亿">亿</option>
+                                <option value="兆">兆</option>
+                                <option value="京">京</option>
+                                <option value="垓">垓</option>
+                                <option value="秭">秭</option>
+                                <option value="穰">穰</option>
+                                <option value="沟">沟</option>
+                                <option value="涧">涧</option>
+                                <option value="正">正</option>
+                                <option value="载">载</option>
+                                <option value="极">极</option>
+                                <option value="恒河沙">恒河沙</option>
+                                <option value="阿僧祇">阿僧祇</option>
+                                <option value="那由它">那由它</option>
+                                <option value="不可思议">不可思议</option>
+                                <option value="无量">无量</option>
+                                <option value="大数">大数</option>
+                                <option value="无敌">无敌</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 魔丹数量输入区域 -->
+                <div id="pills-count-wuji-section" style="display: none;">
+                    <div class="form-group">
+                        <label for="pills-count-wuji">无极魔丹数量</label>
+                        <input type="number" id="pills-count-wuji" placeholder="请输入魔丹数量" min="1" step="1" style="width: 100%;">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="growth-rate-wuji">无极魔丹属性一颗增加 0.01%</label>
+                    <input type="number" id="growth-rate-wuji" value="0.01" readonly style="background-color: #f0f0f0;">
+                </div>
+                
+                <button id="calculate-wuji-btn" class="btn">计算所需无极魔丹数量</button>
+                
+                <div id="error-message-wuji" class="error-message"></div>
+            </div>
+            
+            <!-- 战力上限计算器输入区域 -->
+            <div id="power-limit-calculator" class="input-section" style="display: none;">
+                <div style="display: flex; gap: 20px; align-items: flex-start;">
+                    <!-- 生命类输入 - 左侧 -->
+                    <div style="flex: 1;">
+                        <div class="form-group">
+                            <label for="base-health">基础生命</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="number" id="base-health" placeholder="请输入基础生命" min="0.01" step="0.01" style="flex: 1;">
+                                <select id="base-health-unit" style="padding: 10px 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 0.95rem; min-width: 80px;">
+                                    <option value="">空白</option>
+                                    <option value="万">万</option>
+                                    <option value="亿">亿</option>
+                                    <option value="兆">兆</option>
+                                    <option value="京">京</option>
+                                    <option value="垓">垓</option>
+                                    <option value="秭">秭</option>
+                                    <option value="穰">穰</option>
+                                    <option value="沟">沟</option>
+                                    <option value="涧">涧</option>
+                                    <option value="正">正</option>
+                                    <option value="载">载</option>
+                                    <option value="极">极</option>
+                                    <option value="恒河沙">恒河沙</option>
+                                    <option value="阿僧祇">阿僧祇</option>
+                                    <option value="那由它">那由它</option>
+                                    <option value="不可思议">不可思议</option>
+                                    <option value="无量">无量</option>
+                                    <option value="大数">大数</option>
+                                    <option value="无敌">无敌</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="health-bonus">生命加成</label>
+                            <input type="number" id="health-bonus" placeholder="请输入生命加成" min="0" step="0.01">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="health-increase">生命提升</label>
+                            <input type="number" id="health-increase" placeholder="请输入生命提升" min="0" step="0.01">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="health-amplify">生命增幅</label>
+                            <input type="number" id="health-amplify" placeholder="请输入生命增幅" min="0" step="0.01">
+                        </div>
+                    </div>
+                    
+                    <!-- 攻击类输入 - 右侧 -->
+                    <div style="flex: 1;">
+                        <div class="form-group">
+                            <label for="base-attack">基础攻击</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="number" id="base-attack" placeholder="请输入基础攻击" min="0.01" step="0.01" style="flex: 1;">
+                                <select id="base-attack-unit" style="padding: 10px 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 0.95rem; min-width: 80px;">
+                                    <option value="">空白</option>
+                                    <option value="万">万</option>
+                                    <option value="亿">亿</option>
+                                    <option value="兆">兆</option>
+                                    <option value="京">京</option>
+                                    <option value="垓">垓</option>
+                                    <option value="秭">秭</option>
+                                    <option value="穰">穰</option>
+                                    <option value="沟">沟</option>
+                                    <option value="涧">涧</option>
+                                    <option value="正">正</option>
+                                    <option value="载">载</option>
+                                    <option value="极">极</option>
+                                    <option value="恒河沙">恒河沙</option>
+                                    <option value="阿僧祇">阿僧祇</option>
+                                    <option value="那由它">那由它</option>
+                                    <option value="不可思议">不可思议</option>
+                                    <option value="无量">无量</option>
+                                    <option value="大数">大数</option>
+                                    <option value="无敌">无敌</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="attack-bonus">攻击加成</label>
+                            <input type="number" id="attack-bonus" placeholder="请输入攻击加成" min="0" step="0.01">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="attack-increase">攻击提升</label>
+                            <input type="number" id="attack-increase" placeholder="请输入攻击提升" min="0" step="0.01">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="attack-amplify">攻击增幅</label>
+                            <input type="number" id="attack-amplify" placeholder="请输入攻击增幅" min="0" step="0.01">
+                        </div>
+                    </div>
+                </div>
+                
+                <button id="calculate-power-limit-btn" class="btn">计算战力上限</button>
+                
+                <div id="error-message-power-limit" class="error-message"></div>
+            </div>
+            
+            <!-- 属性丹计算器输入区域 -->
+            <div id="attribute-pill-calculator" class="input-section" style="display: none;">
+                <!-- 计算模式选择 -->
+                <div class="form-group">
+                    <label for="attribute-pill-mode">计算模式</label>
+                    <select id="attribute-pill-mode" style="padding: 10px 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 0.95rem; width: 100%;">
+                        <option value="target-power">指定战力计算</option>
+                        <option value="pill-count">指定磕丹计算</option>
+                    </select>
+                </div>
+                
+                <div style="display: flex; gap: 20px; align-items: flex-start;">
+                    <!-- 生命类输入 - 左侧 -->
+                    <div style="flex: 1;">
+                        <div class="form-group">
+                            <label for="base-health-pill">基础生命</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="number" id="base-health-pill" placeholder="请输入基础生命" min="0.01" step="0.01" style="flex: 1;">
+                                <select id="base-health-pill-unit" style="padding: 10px 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 0.95rem; min-width: 80px;">
+                                    <option value="">空白</option>
+                                    <option value="万">万</option>
+                                    <option value="亿">亿</option>
+                                    <option value="兆">兆</option>
+                                    <option value="京">京</option>
+                                    <option value="垓">垓</option>
+                                    <option value="秭">秭</option>
+                                    <option value="穰">穰</option>
+                                    <option value="沟">沟</option>
+                                    <option value="涧">涧</option>
+                                    <option value="正">正</option>
+                                    <option value="载">载</option>
+                                    <option value="极">极</option>
+                                    <option value="恒河沙">恒河沙</option>
+                                    <option value="阿僧祇">阿僧祇</option>
+                                    <option value="那由它">那由它</option>
+                                    <option value="不可思议">不可思议</option>
+                                    <option value="无量">无量</option>
+                                    <option value="大数">大数</option>
+                                    <option value="无敌">无敌</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="health-bonus-pill">生命加成</label>
+                            <input type="number" id="health-bonus-pill" placeholder="请输入生命加成" min="0" step="0.01">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="health-increase-pill">生命提升</label>
+                            <input type="number" id="health-increase-pill" placeholder="请输入生命提升" min="0" step="0.01">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="health-amplify-pill">生命增幅</label>
+                            <input type="number" id="health-amplify-pill" placeholder="请输入生命增幅" min="0" step="0.01">
+                        </div>
+                    </div>
+                    
+                    <!-- 攻击类输入 - 右侧 -->
+                    <div style="flex: 1;">
+                        <div class="form-group">
+                            <label for="base-attack-pill">基础攻击</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="number" id="base-attack-pill" placeholder="请输入基础攻击" min="0.01" step="0.01" style="flex: 1;">
+                                <select id="base-attack-pill-unit" style="padding: 10px 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 0.95rem; min-width: 80px;">
+                                    <option value="">空白</option>
+                                    <option value="万">万</option>
+                                    <option value="亿">亿</option>
+                                    <option value="兆">兆</option>
+                                    <option value="京">京</option>
+                                    <option value="垓">垓</option>
+                                    <option value="秭">秭</option>
+                                    <option value="穰">穰</option>
+                                    <option value="沟">沟</option>
+                                    <option value="涧">涧</option>
+                                    <option value="正">正</option>
+                                    <option value="载">载</option>
+                                    <option value="极">极</option>
+                                    <option value="恒河沙">恒河沙</option>
+                                    <option value="阿僧祇">阿僧祇</option>
+                                    <option value="那由它">那由它</option>
+                                    <option value="不可思议">不可思议</option>
+                                    <option value="无量">无量</option>
+                                    <option value="大数">大数</option>
+                                    <option value="无敌">无敌</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="attack-bonus-pill">攻击加成</label>
+                            <input type="number" id="attack-bonus-pill" placeholder="请输入攻击加成" min="0" step="0.01">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="attack-increase-pill">攻击提升</label>
+                            <input type="number" id="attack-increase-pill" placeholder="请输入攻击提升" min="0" step="0.01">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="attack-amplify-pill">攻击增幅</label>
+                            <input type="number" id="attack-amplify-pill" placeholder="请输入攻击增幅" min="0" step="0.01">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 属性丹选择 -->
+                <div class="form-group">
+                    <label for="attribute-pill-type">选择属性丹</label>
+                    <select id="attribute-pill-type" style="padding: 10px 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 0.95rem; width: 100%;">
+                        <option value="">请选择属性丹</option>
+                        <option value="0.03">混沌boss丹</option>
+                        <option value="0.06">鸿蒙boss丹</option>
+                        <option value="0.1">上品属性丹</option>
+                        <option value="0.15">极品属性丹</option>
+                        <option value="0.4">仙品属性丹</option>
+                        <option value="0.7">圣品属性丹</option>
+                        <option value="1.0">神王属性丹</option>
+                        <option value="2.0">超级属性丹</option>
+                    </select>
+                </div>
+                
+                <!-- 指定战力模式 - 目标战力输入 -->
+                <div id="target-power-mode" class="form-group">
+                    <label for="target-power-pill">目标战力</label>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="number" id="target-power-pill" placeholder="请输入目标战力" min="0.01" step="0.01" style="flex: 1;">
+                        <select id="target-power-pill-unit" style="padding: 10px 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 0.95rem; min-width: 80px;">
+                            <option value="">空白</option>
+                            <option value="万">万</option>
+                            <option value="亿">亿</option>
+                            <option value="兆">兆</option>
+                            <option value="京">京</option>
+                            <option value="垓">垓</option>
+                            <option value="秭">秭</option>
+                            <option value="穰">穰</option>
+                            <option value="沟">沟</option>
+                            <option value="涧">涧</option>
+                            <option value="正">正</option>
+                            <option value="载">载</option>
+                            <option value="极">极</option>
+                            <option value="恒河沙">恒河沙</option>
+                            <option value="阿僧祇">阿僧祇</option>
+                            <option value="那由它">那由它</option>
+                            <option value="不可思议">不可思议</option>
+                            <option value="无量">无量</option>
+                            <option value="大数">大数</option>
+                            <option value="无敌">无敌</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- 指定磕丹模式 - 吃丹数量输入 -->
+                <div id="pill-count-mode" class="form-group" style="display: none;">
+                    <label for="pill-count">吃丹数量</label>
+                    <input type="number" id="pill-count" placeholder="请输入要吃的属性丹数量" min="1" step="1" style="width: 100%;">
+                </div>
+                
+                <button id="calculate-attribute-pill-btn" class="btn">计算所需属性丹数量</button>
+                
+                <div id="error-message-attribute-pill" class="error-message"></div>
+            </div>
+            
+            <div id="result-section" class="result-section">
+                <div class="result-card">
+                    <h2 class="result-title">计算结果</h2>
+                    
+                    <div class="result-grid">
+                        <div class="result-item">
+                            <div class="result-label">当前战斗力</div>
+                            <div id="current-power-result" class="result-value">-</div>
+                        </div>
+                        
+                        <div class="result-item">
+                            <div id="target-power-label" class="result-label">目标战斗力</div>
+                            <div id="target-power-result" class="result-value">-</div>
+                        </div>
+                        
+                        <div class="result-item">
+                            <div id="growth-rate-label-pool" class="result-label">每5秒增长率</div>
+                            <div id="growth-rate-label-wuji" class="result-label" style="display: none;">无极魔丹属性一颗增加 0.01%</div>
+                            <div id="growth-rate-result" class="result-value">-</div>
+                        </div>
+                        
+                        <!-- 所需时间显示区域 - 模式1 -->
+                        <div id="required-time-item" class="result-item" style="display: none;">
+                            <div class="result-label">所需时间</div>
+                            <div id="required-time" class="result-value">-</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 挂机池结果区域 -->
+                    <div id="pool-results" class="time-section">
+                        <h3 class="time-title">到达时间</h3>
+                        <div class="time-grid">
+                            <div class="time-item">
+                                <div id="target-time" class="time-value">-</div>
+                                <div class="time-label">到达目标时间</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 无极魔丹结果区域 -->
+                    <div id="wuji-results" class="time-section" style="display: none;">
+                        <h3 class="time-title">计算结果</h3>
+                        <div class="time-grid">
+                            <div class="time-item">
+                                <div id="wuji-pills-needed" class="time-value">-</div>
+                                <div class="time-label">所需无极魔丹</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 战力上限结果区域 -->
+                    <div id="power-limit-results" class="time-section" style="display: none;">
+                        <h3 class="time-title">战力上限计算结果</h3>
+                        <div class="time-grid">
+                            <div class="time-item">
+                                <div id="panel-health-result" class="time-value">-</div>
+                                <div class="time-label">面板生命</div>
+                            </div>
+                            <div class="time-item">
+                                <div id="panel-attack-result" class="time-value">-</div>
+                                <div class="time-label">面板攻击</div>
+                            </div>
+                            <div class="time-item">
+                                <div id="total-power-result" class="time-value">-</div>
+                                <div class="time-label">总战力</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 属性丹结果区域 -->
+                    <div id="attribute-pill-results" class="time-section" style="display: none;">
+                        <h3 class="time-title">属性丹计算结果</h3>
+                        <div class="time-grid">
+                            <div class="time-item">
+                                <div id="current-power-pill-result" class="time-value">-</div>
+                                <div class="time-label">当前战力</div>
+                            </div>
+                            <div class="time-item" id="target-power-item">
+                                <div id="target-power-pill-result" class="time-value">-</div>
+                                <div class="time-label">目标战力</div>
+                            </div>
+                            <div class="time-item" id="pills-needed-item">
+                                <div id="pills-needed-result" class="time-value">-</div>
+                                <div class="time-label">所需属性丹</div>
+                            </div>
+                            <div class="time-item" id="after-pills-item" style="display: none;">
+                                <div id="after-pills-result" class="time-value">-</div>
+                                <div class="time-label">吃丹后战力</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>免费使用禁止倒卖二改</p>
+        <!-- 页脚添加固定网址 -->
+        <p class="footer-url">官方网址：<a href="https://xxzs.kesug.com" target="_blank">xxzs.kesug.com</a></p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const calculatorType = document.getElementById('calculator-type');
+            const poolCalculator = document.getElementById('pool-calculator');
+            const wujiCalculator = document.getElementById('wuji-calculator');
+            const powerLimitCalculator = document.getElementById('power-limit-calculator');
+            const attributePillCalculator = document.getElementById('attribute-pill-calculator');
+            const poolResults = document.getElementById('pool-results');
+            const wujiResults = document.getElementById('wuji-results');
+            const powerLimitResults = document.getElementById('power-limit-results');
+            const attributePillResults = document.getElementById('attribute-pill-results');
+            const resultSection = document.getElementById('result-section');
+            
+            const calculatePoolBtn = document.getElementById('calculate-pool-btn');
+            const calculateWujiBtn = document.getElementById('calculate-wuji-btn');
+            const calculatePowerLimitBtn = document.getElementById('calculate-power-limit-btn');
+            const calculateAttributePillBtn = document.getElementById('calculate-attribute-pill-btn');
+            const errorMessagePool = document.getElementById('error-message-pool');
+            const errorMessageWuji = document.getElementById('error-message-wuji');
+            const errorMessagePowerLimit = document.getElementById('error-message-power-limit');
+            const errorMessageAttributePill = document.getElementById('error-message-attribute-pill');
+            
+            // 切换计算器类型
+            calculatorType.addEventListener('change', function() {
+                const type = this.value;
+                if (type === 'pool') {
+                    poolCalculator.style.display = 'block';
+                    wujiCalculator.style.display = 'none';
+                    powerLimitCalculator.style.display = 'none';
+                    attributePillCalculator.style.display = 'none';
+                    poolResults.style.display = 'block';
+                    wujiResults.style.display = 'none';
+                    powerLimitResults.style.display = 'none';
+                    attributePillResults.style.display = 'none';
+                    document.getElementById('growth-rate-label-pool').style.display = 'block';
+                    document.getElementById('growth-rate-label-wuji').style.display = 'none';
+                    
+                    // 显示通用的结果显示项
+                    document.querySelector('.result-grid').style.display = 'grid';
+                } else if (type === 'wuji') {
+                    poolCalculator.style.display = 'none';
+                    wujiCalculator.style.display = 'block';
+                    powerLimitCalculator.style.display = 'none';
+                    attributePillCalculator.style.display = 'none';
+                    poolResults.style.display = 'none';
+                    wujiResults.style.display = 'block';
+                    powerLimitResults.style.display = 'none';
+                    attributePillResults.style.display = 'none';
+                    document.getElementById('growth-rate-label-pool').style.display = 'none';
+                    document.getElementById('growth-rate-label-wuji').style.display = 'block';
+                    
+                    // 显示通用的结果显示项
+                    document.querySelector('.result-grid').style.display = 'grid';
+                } else if (type === 'power-limit') {
+                    poolCalculator.style.display = 'none';
+                    wujiCalculator.style.display = 'none';
+                    powerLimitCalculator.style.display = 'block';
+                    attributePillCalculator.style.display = 'none';
+                    poolResults.style.display = 'none';
+                    wujiResults.style.display = 'none';
+                    powerLimitResults.style.display = 'block';
+                    attributePillResults.style.display = 'none';
+                    document.getElementById('growth-rate-label-pool').style.display = 'none';
+                    document.getElementById('growth-rate-label-wuji').style.display = 'none';
+                    
+                    // 战力上限模式下隐藏通用的结果显示项
+                    document.querySelector('.result-grid').style.display = 'none';
+                } else if (type === 'attribute-pill') {
+                    poolCalculator.style.display = 'none';
+                    wujiCalculator.style.display = 'none';
+                    powerLimitCalculator.style.display = 'none';
+                    attributePillCalculator.style.display = 'block';
+                    poolResults.style.display = 'none';
+                    wujiResults.style.display = 'none';
+                    powerLimitResults.style.display = 'none';
+                    attributePillResults.style.display = 'block';
+                    document.getElementById('growth-rate-label-pool').style.display = 'none';
+                    document.getElementById('growth-rate-label-wuji').style.display = 'none';
+                    
+                    // 属性丹模式下隐藏通用的结果显示项
+                    document.querySelector('.result-grid').style.display = 'none';
+                }
+                resultSection.style.display = 'none';
+            });
+            
+            // 切换挂机池计算模式
+            const poolMode = document.getElementById('pool-mode');
+            const powerModeSection = document.getElementById('power-mode-section');
+            const timeModeSection = document.getElementById('time-mode-section');
+            
+            poolMode.addEventListener('change', function() {
+                const mode = this.value;
+                if (mode === 'power') {
+                    powerModeSection.style.display = 'block';
+                    timeModeSection.style.display = 'none';
+                    calculatePoolBtn.textContent = '计算所需时间';
+                } else {
+                    powerModeSection.style.display = 'none';
+                    timeModeSection.style.display = 'block';
+                    calculatePoolBtn.textContent = '计算到达战力';
+                }
+                resultSection.style.display = 'none';
+            });
+            
+            // 格式化时间函数
+            function formatTime(totalSeconds) {
+                const days = Math.floor(totalSeconds / 86400);
+                const hours = Math.floor((totalSeconds % 86400) / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = Math.floor(totalSeconds % 60);
+                
+                let result = '';
+                if (days > 0) result += `${days}天`;
+                if (hours > 0 || days > 0) result += `${hours}小时`;
+                if (minutes > 0 || hours > 0 || days > 0) result += `${minutes}分钟`;
+                result += `${seconds}秒`;
+                
+                return result;
+            }
+            
+            // 显示错误消息
+            function showError(message) {
+                if (errorMessagePool) {
+                    errorMessagePool.textContent = message;
+                    errorMessagePool.style.display = 'block';
+                    errorMessageWuji.style.display = 'none';
+                }
+            }
+            
+            // 隐藏错误消息
+            function hideError() {
+                if (errorMessagePool && errorMessageWuji) {
+                    errorMessagePool.style.display = 'none';
+                    errorMessageWuji.style.display = 'none';
+                }
+            }
+            
+            // 检查是否为有效的正数
+            function isValidPositiveNumber(value) {
+                return !isNaN(value) && value > 0;
+            }
+            
+            // 获取输入值并转换为数字
+            function getInputValue(elementId) {
+                const element = document.getElementById(elementId);
+                if (!element) return null;
+                const value = parseFloat(element.value);
+                return isValidPositiveNumber(value) ? value : null;
+            }
+            
+            // 战力单位转换函数
+            function convertPowerWithUnit(baseValue, unit) {
+                if (!isValidPositiveNumber(baseValue)) {
+                    return null;
+                }
+                
+                // 游戏中10000为单位晋级标准
+                const unitMultipliers = {
+                    '': 1,                // 空白（默认）
+                    '万': 10000,
+                    '亿': 10000 * 10000,
+                    '兆': 10000 * 10000 * 10000,
+                    '京': 10000 * 10000 * 10000 * 10000,
+                    '垓': 10000 * 10000 * 10000 * 10000 * 10000,
+                    '秭': 10000 * 10000 * 10000 * 10000 * 10000 * 10000,
+                    '穰': 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000,
+                    '沟': 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000,
+                    '涧': 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000,
+                    '正': 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000,
+                    '载': 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000,
+                    '极': 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000,
+                    '恒河沙': 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000,
+                    '阿僧祇': 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000,
+                    '那由它': 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000,
+                    '不可思议': 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000,
+                    '无量': 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000,
+                    '大数': 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000,
+                    '无敌': 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000 * 10000
+                };
+                
+                const multiplier = unitMultipliers[unit] || 1;
+                return baseValue * multiplier;
+            }
+
+            // 将数字转换为带单位的字符串
+            function formatPowerWithUnit(power) {
+                if (!power || power <= 0) {
+                    return '-';
+                }
+                
+                const units = ['', '万', '亿', '兆', '京', '垓', '秭', '穰', '沟', '涧', '正', '载', '极', '恒河沙', '阿僧祇', '那由它', '不可思议', '无量', '大数', '无敌'];
+                let unitIndex = 0;
+                let remainingPower = power;
+                
+                // 找到最合适的单位
+                while (remainingPower >= 10000 && unitIndex < units.length - 1) {
+                    remainingPower /= 10000;
+                    unitIndex++;
+                }
+                
+                // 如果是整数，不显示小数点
+                if (Number.isInteger(remainingPower)) {
+                    return remainingPower + units[unitIndex];
+                }
+                
+                // 否则保留2位小数
+                return remainingPower.toFixed(2).replace(/\.?0+$/, '') + units[unitIndex];
+            }
+            
+            // 获取带单位的战斗力值
+            function getPowerWithUnit(powerId, unitId) {
+                const basePower = getInputValue(powerId);
+                if (basePower === null) {
+                    return null;
+                }
+                
+                const unitElement = document.getElementById(unitId);
+                const unit = unitElement ? unitElement.value : '';
+                return convertPowerWithUnit(basePower, unit);
+            }
+            
+            // 挂机池计算器
+            calculatePoolBtn.addEventListener('click', function() {
+                // 获取输入值
+                const currentPower = getPowerWithUnit('current-power', 'current-power-unit');
+                const growthRatePercent = parseFloat(document.getElementById('growth-rate').value);
+                const mode = document.getElementById('pool-mode').value;
+                
+                // 验证共同输入
+                if (isNaN(currentPower) || currentPower <= 0) {
+                    showError("当前战斗力必须大于0");
+                    return;
+                }
+                
+                if (isNaN(growthRatePercent) || growthRatePercent <= 0) {
+                    showError("增长率必须大于0");
+                    return;
+                }
+                
+                // 隐藏错误消息
+                hideError();
+                
+                // 计算
+                const growthRate = growthRatePercent / 100; // 转换为小数
+                let targetPower, totalSeconds;
+                
+                if (mode === 'power') {
+                    // 指定战力计算（现有功能）
+                    targetPower = getPowerWithUnit('target-power', 'target-power-unit');
+                    
+                    if (isNaN(targetPower) || targetPower <= currentPower) {
+                        showError("目标战斗力必须大于当前战斗力");
+                        return;
+                    }
+                    
+                    // 计算周期数
+                    const n = Math.log(targetPower / currentPower) / Math.log(1 + growthRate);
+                    totalSeconds = n * 5;
+                } else {
+                    // 指定挂机时间计算（新增功能）
+                    const days = parseFloat(document.getElementById('days').value) || 0;
+                    const hours = parseFloat(document.getElementById('hours').value) || 0;
+                    const minutes = parseFloat(document.getElementById('minutes').value) || 0;
+                    
+                    // 验证时间输入
+                    if (days < 0 || hours < 0 || hours >= 24 || minutes < 0 || minutes >= 60) {
+                        showError("请输入有效的挂机时间");
+                        return;
+                    }
+                    
+                    if (days === 0 && hours === 0 && minutes === 0) {
+                        showError("挂机时间不能全为0");
+                        return;
+                    }
+                    
+                    // 计算总秒数
+                    totalSeconds = days * 86400 + hours * 3600 + minutes * 60;
+                    
+                    // 计算周期数
+                    const n = totalSeconds / 5;
+                    
+                    // 计算到达的战斗力
+                    targetPower = currentPower * Math.pow(1 + growthRate, n);
+                }
+                
+                // 更新结果
+                document.getElementById('current-power-result').textContent = formatPowerWithUnit(currentPower);
+                document.getElementById('target-power-result').textContent = formatPowerWithUnit(targetPower);
+                document.getElementById('growth-rate-result').textContent = `${growthRatePercent}%`;
+                
+                // 根据模式设置目标战斗力标签文本
+                const targetPowerLabel = document.getElementById('target-power-label');
+                if (mode === 'time') {
+                    targetPowerLabel.textContent = '到达战力';
+                } else {
+                    targetPowerLabel.textContent = '目标战斗力';
+                }
+                
+                // 根据模式设置所需时间显示
+                const requiredTimeItem = document.getElementById('required-time-item');
+                const requiredTime = document.getElementById('required-time');
+                if (mode === 'power') {
+                    requiredTime.textContent = formatTime(totalSeconds);
+                    requiredTimeItem.style.display = 'block';
+                } else {
+                    requiredTimeItem.style.display = 'none';
+                }
+                
+                // 调整时间网格布局 - 模式2时使用单列布局
+                const timeGrid = document.querySelector('.time-grid');
+                if (mode === 'time') {
+                    timeGrid.classList.add('single-item');
+                } else {
+                    timeGrid.classList.remove('single-item');
+                }
+                
+                // 计算到达时间
+                const now = new Date();
+                const targetDate = new Date(now.getTime() + totalSeconds * 1000);
+                const targetDateStr = targetDate.toLocaleString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                document.getElementById('target-time').textContent = targetDateStr;
+                
+                // 显示结果
+                resultSection.style.display = 'block';
+                
+                // 滚动到结果区域
+                resultSection.scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // 生命提升和攻击提升自动同步功能
+            const healthIncreaseInput = document.getElementById('health-increase');
+            const attackIncreaseInput = document.getElementById('attack-increase');
+            
+            // 监听生命提升输入变化
+            healthIncreaseInput.addEventListener('input', function() {
+                const value = this.value;
+                if (value !== '') {
+                    attackIncreaseInput.value = value;
+                }
+            });
+            
+            // 监听攻击提升输入变化
+            attackIncreaseInput.addEventListener('input', function() {
+                const value = this.value;
+                if (value !== '') {
+                    healthIncreaseInput.value = value;
+                }
+            });
+            
+            // 战力上限计算器
+            calculatePowerLimitBtn.addEventListener('click', function() {
+                // 获取输入值
+                const baseHealth = getPowerWithUnit('base-health', 'base-health-unit');
+                const baseAttack = getPowerWithUnit('base-attack', 'base-attack-unit');
+                const healthBonus = (parseFloat(document.getElementById('health-bonus').value) || 0) / 100;
+                const healthIncrease = (parseFloat(document.getElementById('health-increase').value) || 0) / 100;
+                const healthAmplify = (parseFloat(document.getElementById('health-amplify').value) || 0) / 100;
+                const attackBonus = (parseFloat(document.getElementById('attack-bonus').value) || 0) / 100;
+                const attackIncrease = (parseFloat(document.getElementById('attack-increase').value) || 0) / 100;
+                const attackAmplify = (parseFloat(document.getElementById('attack-amplify').value) || 0) / 100;
+                
+                // 验证输入
+                if (isNaN(baseHealth) || baseHealth <= 0) {
+                    showErrorPowerLimit("基础生命必须大于0");
+                    return;
+                }
+                
+                if (isNaN(baseAttack) || baseAttack <= 0) {
+                    showErrorPowerLimit("基础攻击必须大于0");
+                    return;
+                }
+                
+                // 隐藏错误消息
+                hideErrorPowerLimit();
+                
+                // 计算面板生命和面板攻击
+                const panelHealth = baseHealth * (1 + healthBonus) * (1 + healthIncrease) * (1 + healthAmplify);
+                const panelAttack = baseAttack * (1 + attackBonus) * (1 + attackIncrease) * (1 + attackAmplify);
+                
+                // 计算总战力
+                const totalPower = panelHealth + (5 * panelAttack);
+                
+                // 更新结果显示 - 只显示面板生命、面板攻击和总战力
+                document.querySelector('#power-limit-results #panel-health-result').textContent = formatPowerWithUnit(panelHealth);
+                document.querySelector('#power-limit-results #panel-attack-result').textContent = formatPowerWithUnit(panelAttack);
+                document.querySelector('#power-limit-results #total-power-result').textContent = formatPowerWithUnit(totalPower);
+                
+                // 显示结果
+                resultSection.style.display = 'block';
+                
+                // 滚动到结果区域
+                resultSection.scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // 切换无极魔丹计算模式
+            const wujiMode = document.getElementById('wuji-mode');
+            const targetPowerWujiSection = document.getElementById('target-power-wuji-section');
+            const pillsCountWujiSection = document.getElementById('pills-count-wuji-section');
+            
+            wujiMode.addEventListener('change', function() {
+                const mode = this.value;
+                if (mode === 'target') {
+                    targetPowerWujiSection.style.display = 'block';
+                    pillsCountWujiSection.style.display = 'none';
+                    calculateWujiBtn.textContent = '计算所需无极魔丹数量';
+                } else {
+                    targetPowerWujiSection.style.display = 'none';
+                    pillsCountWujiSection.style.display = 'block';
+                    calculateWujiBtn.textContent = '计算吃丹到达战力';
+                }
+                resultSection.style.display = 'none';
+            });
+            
+            // 无极魔丹计算器
+            calculateWujiBtn.addEventListener('click', function() {
+                // 获取输入值
+                const currentPower = getPowerWithUnit('current-power-wuji', 'current-power-wuji-unit');
+                const growthRatePercent = parseFloat(document.getElementById('growth-rate-wuji').value);
+                const mode = document.getElementById('wuji-mode').value;
+                
+                // 确保无极魔丹结果区域使用单列布局
+                const wujiTimeGrid = document.querySelector('#wuji-results .time-grid');
+                wujiTimeGrid.classList.add('single-item');
+                
+                // 验证输入
+                if (isNaN(currentPower) || currentPower <= 0) {
+                    showErrorWuji("当前战斗力必须大于0");
+                    return;
+                }
+                
+                // 隐藏错误消息
+                hideErrorWuji();
+                
+                let targetPower, wujiPillsNeeded;
+                const growthRate = growthRatePercent / 100;
+                
+                if (mode === 'target') {
+                    // 模式1：计算到达目标战力所需的魔丹数量
+                    targetPower = getPowerWithUnit('target-power-wuji', 'target-power-wuji-unit');
+                    
+                    if (isNaN(targetPower) || targetPower <= currentPower) {
+                        showErrorWuji("目标战斗力必须大于当前战斗力");
+                        return;
+                    }
+                    
+                    // 计算所需魔丹数量
+                    const n = Math.log(targetPower / currentPower) / Math.log(1 + growthRate);
+                    wujiPillsNeeded = Math.ceil(n);
+                    
+                    // 更新结果
+                    document.getElementById('current-power-result').textContent = formatPowerWithUnit(currentPower);
+                    document.getElementById('target-power-result').textContent = formatPowerWithUnit(targetPower);
+                    document.getElementById('growth-rate-result').textContent = `${growthRatePercent}%`;
+                    document.getElementById('wuji-pills-needed').textContent = `${wujiPillsNeeded.toLocaleString()} 颗`;
+                    
+                    // 设置标签文本
+                    document.getElementById('target-power-label').textContent = '目标战斗力';
+                    document.querySelector('#wuji-results .time-title').textContent = '计算结果';
+                    document.querySelector('#wuji-results .time-label').textContent = '所需无极魔丹';
+                    
+                } else {
+                    // 模式2：计算吃指定数量的魔丹能达到的战力
+                    wujiPillsNeeded = parseInt(document.getElementById('pills-count-wuji').value);
+                    
+                    if (isNaN(wujiPillsNeeded) || wujiPillsNeeded <= 0) {
+                        showErrorWuji("魔丹数量必须大于0");
+                        return;
+                    }
+                    
+                    // 计算到达的战斗力
+                    targetPower = currentPower * Math.pow(1 + growthRate, wujiPillsNeeded);
+                    
+                    // 更新结果 - 调整显示顺序以符合用户期望
+                    document.getElementById('current-power-result').textContent = formatPowerWithUnit(currentPower);
+                    // 在中间位置显示魔丹数量
+                    document.getElementById('target-power-result').textContent = `${wujiPillsNeeded.toLocaleString()} 颗`;
+                    document.getElementById('growth-rate-result').textContent = `${growthRatePercent}%`;
+                    // 在最下方显示到达战力
+                    document.getElementById('wuji-pills-needed').textContent = formatPowerWithUnit(targetPower);
+                    
+                    // 设置标签文本
+                    document.getElementById('target-power-label').textContent = '无极魔丹数量';
+                    document.querySelector('#wuji-results .time-title').textContent = '计算结果';
+                    document.querySelector('#wuji-results .time-label').textContent = '到达战力';
+                }
+                
+                // 隐藏所需时间区域，因为无极魔丹计算不需要显示
+                const requiredTimeItem = document.getElementById('required-time-item');
+                requiredTimeItem.style.display = 'none';
+                
+                // 显示结果
+                resultSection.style.display = 'block';
+                
+                // 滚动到结果区域
+                resultSection.scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            function showError(message) {
+                if (errorMessagePool && resultSection) {
+                    errorMessagePool.textContent = message;
+                    errorMessagePool.style.display = 'block';
+                    resultSection.style.display = 'none';
+                }
+            }
+            
+            function hideError() {
+                if (errorMessagePool) {
+                    errorMessagePool.style.display = 'none';
+                }
+            }
+            
+            function showErrorWuji(message) {
+                if (errorMessageWuji && resultSection) {
+                    errorMessageWuji.textContent = message;
+                    errorMessageWuji.style.display = 'block';
+                    resultSection.style.display = 'none';
+                }
+            }
+            
+            function hideErrorWuji() {
+                if (errorMessageWuji) {
+                    errorMessageWuji.style.display = 'none';
+                }
+            }
+            
+            function showErrorPowerLimit(message) {
+                if (errorMessagePowerLimit && resultSection) {
+                    errorMessagePowerLimit.textContent = message;
+                    errorMessagePowerLimit.style.display = 'block';
+                    resultSection.style.display = 'none';
+                }
+            }
+            
+            function hideErrorPowerLimit() {
+                if (errorMessagePowerLimit) {
+                    errorMessagePowerLimit.style.display = 'none';
+                }
+            }
+            
+            function showErrorAttributePill(message) {
+                if (errorMessageAttributePill && resultSection) {
+                    errorMessageAttributePill.textContent = message;
+                    errorMessageAttributePill.style.display = 'block';
+                    resultSection.style.display = 'none';
+                }
+            }
+            
+            function hideErrorAttributePill() {
+                if (errorMessageAttributePill) {
+                    errorMessageAttributePill.style.display = 'none';
+                }
+            }
+            
+            // 生命提升和攻击提升自动同步
+            document.getElementById('health-increase-pill').addEventListener('input', function() {
+                const value = this.value;
+                document.getElementById('attack-increase-pill').value = value;
+            });
+            
+            document.getElementById('attack-increase-pill').addEventListener('input', function() {
+                const value = this.value;
+                document.getElementById('health-increase-pill').value = value;
+            });
+            
+            // 属性丹计算模式切换
+            document.getElementById('attribute-pill-mode').addEventListener('change', function() {
+                const mode = this.value;
+                if (mode === 'target-power') {
+                    document.getElementById('target-power-mode').style.display = 'block';
+                    document.getElementById('pill-count-mode').style.display = 'none';
+                    document.getElementById('calculate-attribute-pill-btn').textContent = '计算所需属性丹数量';
+                    // 更新结果显示
+                    document.querySelector('#attribute-pill-results .time-title').textContent = '属性丹计算结果';
+                    document.getElementById('target-power-item').style.display = 'block';
+                    document.getElementById('pills-needed-item').style.display = 'block';
+                    document.getElementById('after-pills-item').style.display = 'none';
+                } else if (mode === 'pill-count') {
+                    document.getElementById('target-power-mode').style.display = 'none';
+                    document.getElementById('pill-count-mode').style.display = 'block';
+                    document.getElementById('calculate-attribute-pill-btn').textContent = '计算吃丹后战力';
+                    // 更新结果显示
+                    document.querySelector('#attribute-pill-results .time-title').textContent = '指定磕丹计算结果';
+                    document.getElementById('target-power-item').style.display = 'none';
+                    document.getElementById('pills-needed-item').style.display = 'none';
+                    document.getElementById('after-pills-item').style.display = 'block';
+                }
+            });
+            
+            // 属性丹计算器
+            calculateAttributePillBtn.addEventListener('click', function() {
+                // 获取输入值
+                const baseHealth = getPowerWithUnit('base-health-pill', 'base-health-pill-unit');
+                const baseAttack = getPowerWithUnit('base-attack-pill', 'base-attack-pill-unit');
+                const healthBonus = (parseFloat(document.getElementById('health-bonus-pill').value) || 0) / 100;
+                const healthIncrease = (parseFloat(document.getElementById('health-increase-pill').value) || 0) / 100;
+                const healthAmplify = (parseFloat(document.getElementById('health-amplify-pill').value) || 0) / 100;
+                const attackBonus = (parseFloat(document.getElementById('attack-bonus-pill').value) || 0) / 100;
+                const attackIncrease = (parseFloat(document.getElementById('attack-increase-pill').value) || 0) / 100;
+                const attackAmplify = (parseFloat(document.getElementById('attack-amplify-pill').value) || 0) / 100;
+                const pillType = document.getElementById('attribute-pill-type').value;
+                const mode = document.getElementById('attribute-pill-mode').value;
+                
+                // 验证输入
+                if (isNaN(baseHealth) || baseHealth <= 0) {
+                    showErrorAttributePill("基础生命必须大于0");
+                    return;
+                }
+                
+                if (isNaN(baseAttack) || baseAttack <= 0) {
+                    showErrorAttributePill("基础攻击必须大于0");
+                    return;
+                }
+                
+                if (!pillType) {
+                    showErrorAttributePill("请选择属性丹类型");
+                    return;
+                }
+                
+                // 隐藏错误消息
+                hideErrorAttributePill();
+                
+                // 计算当前战力（无属性丹加成）
+                const panelHealthCurrent = baseHealth * (1 + healthBonus) * (1 + healthIncrease) * (1 + healthAmplify);
+                const panelAttackCurrent = baseAttack * (1 + attackBonus) * (1 + attackIncrease) * (1 + attackAmplify);
+                const currentPower = panelHealthCurrent + (5 * panelAttackCurrent);
+                
+                // 计算属性丹加成后的战力
+                const pillBonus = parseFloat(pillType);
+                const panelHealthWithPill = baseHealth * (1 + healthBonus) * (1 + healthIncrease + pillBonus) * (1 + healthAmplify);
+                const panelAttackWithPill = baseAttack * (1 + attackBonus) * (1 + attackIncrease + pillBonus) * (1 + attackAmplify);
+                const powerWithOnePill = panelHealthWithPill + (5 * panelAttackWithPill);
+                
+                if (mode === 'target-power') {
+                    // 指定战力计算模式
+                    const targetPower = getPowerWithUnit('target-power-pill', 'target-power-pill-unit');
+                    
+                    // 验证目标战力
+                    if (isNaN(targetPower) || targetPower <= 0) {
+                        showErrorAttributePill("目标战力必须大于0");
+                        return;
+                    }
+                    
+                    // 计算所需属性丹数量
+                    let pillsNeeded = 0;
+                    
+                    // 如果目标战力小于等于当前战力，不需要属性丹
+                    if (targetPower <= currentPower) {
+                        pillsNeeded = 0;
+                    } else {
+                        // 计算需要多少颗属性丹
+                        // 由于属性丹是乘法叠加，我们需要解方程找到最小的n
+                        // currentPower * (powerWithOnePill/currentPower)^n >= targetPower
+                        const ratio = powerWithOnePill / currentPower;
+                        const n = Math.log(targetPower / currentPower) / Math.log(ratio);
+                        pillsNeeded = Math.ceil(n);
+                    }
+                    
+                    // 只显示选择的属性丹计算结果
+                    const selectedPillName = document.getElementById('attribute-pill-type').options[document.getElementById('attribute-pill-type').selectedIndex].text;
+                    
+                    let resultText = '';
+                    if (pillsNeeded <= 0) {
+                        resultText = '当前战力已满足目标，无需属性丹';
+                    } else {
+                        resultText = `需要${pillsNeeded}颗${selectedPillName}`;
+                    }
+                    
+                    // 更新结果显示
+                    document.querySelector('#attribute-pill-results #current-power-pill-result').textContent = formatPowerWithUnit(currentPower);
+                    document.querySelector('#attribute-pill-results #target-power-pill-result').textContent = formatPowerWithUnit(targetPower);
+                    document.querySelector('#attribute-pill-results #pills-needed-result').textContent = resultText;
+                    
+                } else if (mode === 'pill-count') {
+                    // 指定磕丹计算模式
+                    const pillCount = parseInt(document.getElementById('pill-count').value) || 0;
+                    
+                    // 验证吃丹数量
+                    if (isNaN(pillCount) || pillCount < 0) {
+                        showErrorAttributePill("吃丹数量必须大于等于0");
+                        return;
+                    }
+                    
+                    // 计算吃丹后的战力（考虑多颗属性丹的叠加效果）
+                    const panelHealthAfterPills = baseHealth * (1 + healthBonus) * (1 + healthIncrease + (pillBonus * pillCount)) * (1 + healthAmplify);
+                    const panelAttackAfterPills = baseAttack * (1 + attackBonus) * (1 + attackIncrease + (pillBonus * pillCount)) * (1 + attackAmplify);
+                    const powerAfterPills = panelHealthAfterPills + (5 * panelAttackAfterPills);
+                    
+                    const selectedPillName = document.getElementById('attribute-pill-type').options[document.getElementById('attribute-pill-type').selectedIndex].text;
+                    
+                    // 更新结果显示
+                    document.querySelector('#attribute-pill-results #current-power-pill-result').textContent = formatPowerWithUnit(currentPower);
+                    document.querySelector('#attribute-pill-results #after-pills-result').textContent = `吃${pillCount}颗${selectedPillName}后战力：${formatPowerWithUnit(powerAfterPills)}`;
+                }
+                
+                // 显示结果
+                resultSection.style.display = 'block';
+                
+                // 滚动到结果区域
+                resultSection.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+        // 模态窗口逻辑
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('anti-loss-modal');
+            const closeBtn = document.getElementById('modal-close-btn');
+            const copyGroupBtn = document.getElementById('copy-group-btn');
+            
+            // 显示模态窗口
+            modal.style.display = 'flex';
+            
+            // 关闭按钮点击事件
+            closeBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+            
+            // 点击模态窗口外部区域关闭
+            window.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+            
+            // 复制群号功能
+            copyGroupBtn.addEventListener('click', function() {
+                const groupNumber = '991688608';
+                navigator.clipboard.writeText(groupNumber).then(function() {
+                    // 临时修改按钮文本表示复制成功
+                    const originalText = copyGroupBtn.textContent;
+                    copyGroupBtn.textContent = '复制成功！';
+                    
+                    setTimeout(function() {
+                        copyGroupBtn.textContent = originalText;
+                    }, 2000);
+                }).catch(function() {
+                    // 如果浏览器不支持clipboard API，使用传统方法
+                    const textArea = document.createElement('textarea');
+                    textArea.value = groupNumber;
+                    textArea.style.position = 'fixed';
+                    textArea.style.left = '-999999px';
+                    textArea.style.top = '-999999px';
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    
+                    try {
+                        document.execCommand('copy');
+                        const originalText = copyGroupBtn.textContent;
+                        copyGroupBtn.textContent = '复制成功！';
+                        
+                        setTimeout(function() {
+                            copyGroupBtn.textContent = originalText;
+                        }, 2000);
+                    } catch (err) {
+                        console.error('复制失败:', err);
+                    }
+                    
+                    document.body.removeChild(textArea);
+                });
+            });
+        });
+    </script>
+    
+    <!-- 防止失联提示窗口 -->
+    <div id="anti-loss-modal" class="modal">
+        <div class="modal-content">
+            <button id="modal-close-btn" class="close-button">&times;</button>
+            <div class="modal-message">防止失联，请进入官方Q群</div>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin: 15px 0;">
+                <span style="font-size: 1.2rem; font-weight: bold; color: #1a2a6c;">939556650</span>
+                <button id="copy-group-btn" class="btn" style="width: auto; padding: 8px 15px; font-size: 0.9rem;">复制群号</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
